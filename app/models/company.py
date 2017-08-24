@@ -13,8 +13,13 @@ class Company(models.Model):
 
 class CompanyMember(models.Model):
 	company = models.ForeignKey(Company, related_name='Company')
-	member = models.OneToOneField(User, on_delete=models.CASCADE)
+	member = models.ForeignKey(User, on_delete=models.CASCADE, related_name='member')
 	date_joined = models.DateTimeField(auto_now=True)
+
+	
+	class Meta:
+		unique_together = (("company", "member"),)
 
 	def __str__(self):
 		return '{}-{}'.format(self.company, self.member.username)
+

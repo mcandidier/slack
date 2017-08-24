@@ -5,7 +5,7 @@ from .models.channel import Channel
 from .models.company import Company, CompanyMember 
 from .models.message import Message
 
-from .serializers import ChannelSerializer, MessageSerializer, CompanySerializer
+from .serializers import ChannelSerializer, MessageSerializer, CompanySerializer, CompanyMemberSerializer
 
 class ChannelViewSet(viewsets.ModelViewSet):
     queryset = Channel.objects.all().order_by('-date_creatd')
@@ -32,5 +32,16 @@ class MessageViewSet(viewsets.ModelViewSet):
 class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all().order_by('-date_created')
     serializer_class = CompanySerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+class CompanyMemberViewSet(viewsets.ModelViewSet):
+    queryset = CompanyMember.objects.all()
+    serializer_class = CompanyMemberSerializer
+
+    def get_queryset(self):
+        companies = self.queryset.filter(company__in=self.request.user.company_set.all())
+        return companies.distinct('company')
 
 

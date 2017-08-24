@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models.channel import Channel
-from .models.company import Company 
+from .models.company import Company,CompanyMember
 from .models.message import Message
 
 class ChannelSerializer(serializers.ModelSerializer):
@@ -24,3 +24,9 @@ class MessageSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 		read_only_fields = ('id', 'sender')
 
+
+class CompanyMemberSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = CompanyMember
+		fields = '__all__'
+		read_only_fields = ('id', 'member')
