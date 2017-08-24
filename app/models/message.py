@@ -12,4 +12,4 @@ class Message(models.Model):
 	date_updated = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
-		return '{}{}'.format(self.sender, self.content)
+		return '{}-{}-{}'.format(self.channel.company, self.sender, self.content)

@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from app.views import CompanyView
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/', include('app.urls', namespace='api'))
+    url(r'^api/', include('app.urls', namespace='api')),
+    url(r'^config/(?P<company_id>\d+)/$', CompanyView.as_view(), name='config')
 ]

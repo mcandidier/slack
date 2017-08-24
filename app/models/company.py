@@ -13,7 +13,7 @@ class Company(models.Model):
 
 class CompanyMember(models.Model):
 	company = models.ForeignKey(Company, related_name='Company')
-	member = models.ForeignKey(User, on_delete=models.CASCADE, related_name='member')
+	member = models.ForeignKey(User, on_delete=models.CASCADE, related_name='companies')
 	date_joined = models.DateTimeField(auto_now=True)
 
 	
