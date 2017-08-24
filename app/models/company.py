@@ -9,3 +9,12 @@ class Company(models.Model):
 
 	def __str__(self):
 		return self.name
+
+
+class CompanyMember(models.Model):
+	company = models.ForeignKey(Company, related_name='Company')
+	member = models.OneToOneField(User, on_delete=models.CASCADE)
+	date_joined = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return '{}-{}'.format(self.company, self.member.username)
