@@ -30,3 +30,6 @@ class CompanyMemberSerializer(serializers.ModelSerializer):
 		model = CompanyMember
 		fields = '__all__'
 		read_only_fields = ('id', 'member',)
+
+
+

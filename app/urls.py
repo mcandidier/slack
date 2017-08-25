@@ -6,5 +6,6 @@ router = routers.DefaultRouter()
 router.register(r'channels', views.ChannelViewSet)
 router.register(r'messages', views.MessageViewSet)
 router.register(r'companies', views.CompanyViewSet)
+router.register(r'members', views.CompanyMemberViewSet)
 
 urlpatterns =  router.urls

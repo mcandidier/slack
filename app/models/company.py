@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Company(models.Model):
 	name = models.CharField(max_length=128)
 	description = models.TextField(null=True, blank=True)
@@ -13,7 +14,7 @@ class Company(models.Model):
 
 class CompanyMember(models.Model):
 	company = models.ForeignKey(Company, related_name='Company')
-	member = models.ForeignKey(User, on_delete=models.CASCADE, related_name='companies')
+	member = models.ForeignKey(User, on_delete=models.CASCADE, related_name='memberships')
 	date_joined = models.DateTimeField(auto_now=True)
 
 	

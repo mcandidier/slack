@@ -17,22 +17,25 @@ from .serializers import ChannelSerializer, MessageSerializer, CompanySerializer
 class ChannelViewSet(viewsets.ModelViewSet):
     queryset = Channel.objects.all().order_by('-date_creatd')
     serializer_class = ChannelSerializer
+    permission_classes = (IsAuthenticated, IsCompanyMember)
 
     def get_queryset(self):
+        # return all channels of different companies for the authenticated user
         user_companies = self.request.user.company_set.all()
         return self.queryset.filter(company__in=user_companies)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all().order_by('-date_created')
+    queryset =  Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = (IsAuthenticated, IsCompanyMember)
 
     def get_queryset(self):
-        channel_id = self.request.session.get('active_company', None)
+        # filter only the messages for user selected channel and active company 
+        company_id = self.request.session.get('active_company')
         name = self.request.query_params.get('channel', None)
-        if name is not None and channel_id is not None:
-            return self.queryset.filter(channel__id=int(channel_id), channel__name=name)
+        if name is not None:
+            return self.queryset.filter(channel__name=name, channel__id=company_id)
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
@@ -43,8 +46,20 @@ class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
 
     def get_queryset(self):
-        user_companies = self.request.user.companies.all().values_list('id', flat=True)
+        # show all the companies which he is member
+        user_companies = self.request.user.memberships.all().values_list('company__id', flat=True)
         return self.queryset.filter(id__in=user_companies)
+
+
+class CompanyMemberViewSet(viewsets.ModelViewSet):
+    queryset = CompanyMember.objects.all()
+    serializer_class = CompanyMemberSerializer
+    permission_classes = (IsAuthenticated, IsCompanyMember)
+
+    def get_queryset(self):
+        # display all the members for the active company
+        company_id = self.request.session.get('active_company')
+        return self.queryset.filter(company__id=int(company_id))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -62,14 +77,4 @@ class CompanyView(View):
         except KeyError:
             pass
         return HttpResponse('logging out')
-
-
-# class CompanyMemberViewSet(viewsets.ModelViewSet):
-#     queryset = CompanyMember.objects.all()
-#     serializer_class = CompanyMemberSerializer
-
-#     def get_queryset(self):
-#         companies = self.queryset.filter(company__in=self.request.user.company_set.all())
-#         return companies.distinct('company')
-
 
