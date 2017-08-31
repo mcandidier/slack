@@ -22,7 +22,7 @@ class MessageSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Message
 		fields = '__all__'
-		read_only_fields = ('id', 'sender',)
+		read_only_fields = ('id', 'sender', 'channel')
 
 
 class CompanyMemberSerializer(serializers.ModelSerializer):

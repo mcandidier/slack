@@ -2,3 +2,4 @@
 *.sqlite3
 node_modules/*
 *.DS_Store
+static/app/node_modules/*

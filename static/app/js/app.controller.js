@@ -44,12 +44,22 @@ class ChannelMessagesCtrl {
     constructor($scope, CompanyService, $stateParams) {
         'ngInject';
         this.CompanyService = CompanyService;
-        const channelName = $stateParams.channel;
-        CompanyService.getAllMessages(channelName).then(resp => {
+        this.channelName = $stateParams.channel;
+        this.msgForm = {};        
+        CompanyService.getAllMessages(this.channelName).then(resp => {
             this.messages = resp.data;
         });
     }
 
+    sendMessage(form, data) {
+        data.channel = this.channelName;
+        this.CompanyService.sendChannelMessage(data).then( resp => {
+            this.messages.push(resp.data);
+            form.$setPristine();
+            this.msgForm = {}; //reset form data
+        });
+
+    } 
 }
 
 export {

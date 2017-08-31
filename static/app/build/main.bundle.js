@@ -80,31 +80,38 @@ __webpack_require__(4);
 
 var _app = __webpack_require__(6);
 
-var _app2 = _interopRequireDefault(_app);
+var _app2 = __webpack_require__(7);
 
-var _app3 = __webpack_require__(7);
-
-var _app4 = _interopRequireDefault(_app3);
+var _app3 = _interopRequireDefault(_app2);
 
 var _appController = __webpack_require__(8);
 
-var _app5 = __webpack_require__(9);
+var _app4 = __webpack_require__(9);
 
-var _app6 = _interopRequireDefault(_app5);
+var _app5 = _interopRequireDefault(_app4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // app scripts
 var requires = ['ui.router', 'LocalStorageModule'];
 
+// instantiate angular app
 var app = _angular2.default.module('app', requires);
 
-app.constant('AppConstant', _app4.default);
+// app constant
+app.constant('AppConstant', _app3.default);
+
+// app services 
+app.service('CompanyService', _app5.default);
+
+// app controllers 
 app.controller('IndexCtrl', _appController.IndexCtrl);
 app.controller('ChannelMessagesCtrl', _appController.ChannelMessagesCtrl);
 app.controller('CompanyDetailCtrl', _appController.CompanyDetailCtrl);
-app.service('CompanyService', _app6.default);
-app.config(_app2.default);
+
+// app configs
+app.config(_app.routesConfig);
+app.config(_app.csrfConfig);
 
 // load angular app module manually
 _angular2.default.bootstrap(document, ['app']);
@@ -23539,7 +23546,13 @@ function routesConfig($stateProvider, $urlRouterProvider, AppConstant) {
     $urlRouterProvider.otherwise('/');
 }
 
-exports.default = routesConfig;
+function csrfConfig($httpProvider) {
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+}
+
+exports.routesConfig = routesConfig;
+exports.csrfConfig = csrfConfig;
 
 /***/ }),
 /* 7 */
@@ -23636,19 +23649,38 @@ var CompanyDetailCtrl = function () {
     return CompanyDetailCtrl;
 }();
 
-var ChannelMessagesCtrl = function ChannelMessagesCtrl($scope, CompanyService, $stateParams) {
-    'ngInject';
+var ChannelMessagesCtrl = function () {
+    function ChannelMessagesCtrl($scope, CompanyService, $stateParams) {
+        'ngInject';
 
-    var _this4 = this;
+        var _this4 = this;
 
-    _classCallCheck(this, ChannelMessagesCtrl);
+        _classCallCheck(this, ChannelMessagesCtrl);
 
-    this.CompanyService = CompanyService;
-    var channelName = $stateParams.channel;
-    CompanyService.getAllMessages(channelName).then(function (resp) {
-        _this4.messages = resp.data;
-    });
-};
+        this.CompanyService = CompanyService;
+        this.channelName = $stateParams.channel;
+        this.msgForm = {};
+        CompanyService.getAllMessages(this.channelName).then(function (resp) {
+            _this4.messages = resp.data;
+        });
+    }
+
+    _createClass(ChannelMessagesCtrl, [{
+        key: 'sendMessage',
+        value: function sendMessage(form, data) {
+            var _this5 = this;
+
+            data.channel = this.channelName;
+            this.CompanyService.sendChannelMessage(data).then(function (resp) {
+                _this5.messages.push(resp.data);
+                form.$setPristine();
+                _this5.msgForm = {}; //reset form data
+            });
+        }
+    }]);
+
+    return ChannelMessagesCtrl;
+}();
 
 exports.IndexCtrl = IndexCtrl;
 exports.CompanyDetailCtrl = CompanyDetailCtrl;
@@ -23706,6 +23738,11 @@ var CompanyService = function () {
         key: 'getAllMessages',
         value: function getAllMessages(channel_name) {
             return this.http.get(this.AppConstant.apiUrl + 'messages/?channel=' + channel_name);
+        }
+    }, {
+        key: 'sendChannelMessage',
+        value: function sendChannelMessage(form) {
+            return this.http.post(this.AppConstant.apiUrl + 'messages/', form);
         }
     }]);
 

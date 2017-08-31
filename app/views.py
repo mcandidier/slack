@@ -14,31 +14,37 @@ from .permissions import IsCompanyMember
 
 from .serializers import ChannelSerializer, MessageSerializer, CompanySerializer, CompanyMemberSerializer
 
-class ChannelViewSet(viewsets.ModelViewSet):
+class CompanyMixin(object):
+    """ Company mixins, return list of methods for company.
+    """
+    def get_active_company(self):
+        return int(self.request.session.get('active_company'))
+
+
+class ChannelViewSet(CompanyMixin, viewsets.ModelViewSet):
     queryset = Channel.objects.all().order_by('-date_creatd')
     serializer_class = ChannelSerializer
     permission_classes = (IsAuthenticated, IsCompanyMember)
 
     def get_queryset(self):
         # return all channels of different companies for the authenticated user
-        company_id = self.request.session.get('active_company')
-        return self.queryset.filter(company__id=int(company_id))
+        return self.queryset.filter(company__id=self.get_active_company())
 
 
-class MessageViewSet(viewsets.ModelViewSet):
+class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):
     queryset =  Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = (IsAuthenticated, IsCompanyMember)
 
     def get_queryset(self):
         # filter only the messages for user selected channel and active company 
-        company_id = self.request.session.get('active_company')
         name = self.request.query_params.get('channel', None)
         if name is not None:
-            return self.queryset.filter(channel__name=name, channel__company__id=int(company_id))
+            return self.queryset.filter(channel__name=name, channel__company__id=self.get_active_company())
 
     def perform_create(self, serializer):
-        serializer.save(sender=self.request.user)
+        channel = Channel.objects.get(name=self.request.data['channel'], company__id=self.get_active_company())
+        serializer.save(sender=self.request.user, channel=channel)
 
 
 class CompanyViewSet(viewsets.ModelViewSet):

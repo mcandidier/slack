@@ -28,4 +28,9 @@ export default class CompanyService {
     getAllMessages(channel_name) {
         return this.http.get(this.AppConstant.apiUrl + 'messages/?channel='+channel_name);
     }
+
+    sendChannelMessage(form) {
+        return this.http.post(this.AppConstant.apiUrl + 'messages/', form);
+    }
+
 }

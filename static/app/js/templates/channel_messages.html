@@ -1,5 +1,31 @@
-<ul>
-    <li ng-repeat="message in ctrl.messages">
-        {{ ctrl.CompanyService.members[message.sender].name }} - {{ message.content }}
-    </li>
-</ul>
+<div class="message-block" style="height: 75vh;
+    overflow-y: auto;">
+<div class="media" ng-repeat="message in ctrl.messages">
+  <div class="media-left">
+    <img ng-src="/static/app/image/default_avatar.png" class="media-object img-circle" style="width:40px">
+  </div>
+  <div class="media-body">
+    <h5 class="media-heading">{{ ctrl.CompanyService.members[message.sender].name }}<span class="text-muted small">    {{ message.date_created | date:'medium' }}</span></h5>
+    <p>{{ message.content }}</p>
+  </div>
+</div>
+</div>
+
+<section>
+    <form name="msgForm" class="form" ng-submit="msgForm.$valid && ctrl.sendMessage(msgForm, ctrl.msgForm)"
+    novalidate="">
+        <div class="form-group">
+            <textarea class="form-control"
+                name="content" 
+                ng-model="ctrl.msgForm.content"
+                required=""></textarea>
+            <span class="text-warning"
+                ng-show="msgForm.$submitted && msgForm.content.$invalid">
+                This field is required.</span>
+        </div>
+        <button type="submit" 
+            class="btn btn-sm btn-primary pull-right">
+            Send</button>
+        <div class="clearfix"></div>
+    </form>
+</section>

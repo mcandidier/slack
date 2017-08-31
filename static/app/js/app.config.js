@@ -24,5 +24,13 @@ function routesConfig($stateProvider, $urlRouterProvider, AppConstant) {
     $urlRouterProvider.otherwise('/');
 }
 
+function csrfConfig($httpProvider) {
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+}
 
-export default routesConfig;
+
+export {
+    routesConfig,
+    csrfConfig
+};
