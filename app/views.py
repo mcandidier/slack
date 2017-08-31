@@ -21,8 +21,8 @@ class ChannelViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # return all channels of different companies for the authenticated user
-        user_companies = self.request.user.company_set.all()
-        return self.queryset.filter(company__in=user_companies)
+        company_id = self.request.session.get('active_company')
+        return self.queryset.filter(company__id=int(company_id))
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -35,7 +35,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         company_id = self.request.session.get('active_company')
         name = self.request.query_params.get('channel', None)
         if name is not None:
-            return self.queryset.filter(channel__name=name, channel__id=company_id)
+            return self.queryset.filter(channel__name=name, channel__company__id=int(company_id))
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
@@ -66,6 +66,9 @@ class CompanyMemberViewSet(viewsets.ModelViewSet):
 class CompanyView(View):
 
     def get(self, *args, **kwargs):
+        active_company =  self.request.session.get('active_company', None)
+        if active_company is not None:
+            del self.request.session['active_company']
         company = kwargs.get('company_id', None)
         if company is not None:
             self.request.session['active_company'] =  company

@@ -14,7 +14,7 @@ class ChannelSerializer(serializers.ModelSerializer):
 class CompanySerializer(serializers.ModelSerializer):
 	class Meta: 
 		model = Company
-		fields = ('name', 'description', 'date_created',)
+		fields = ('id', 'name', 'description', 'date_created',)
 		read_only_fields = ('id',)
 
 
@@ -26,10 +26,15 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class CompanyMemberSerializer(serializers.ModelSerializer):
+	name = serializers.SerializerMethodField()
+
+	def get_name(self, obj):
+		return obj.member.username
+
 	class Meta:
 		model = CompanyMember
 		fields = '__all__'
-		read_only_fields = ('id', 'member',)
+		read_only_fields = ('id', 'member', 'name')
 
 
 

@@ -1,0 +1,17 @@
+
+<div class="row">
+    <div class="col-md-2">
+        <ul>
+            <li ng-repeat="company in ctrl.companies">
+                <a href="" ng-click="ctrl.companySelect(company)">{{ company.name }} {{ company.id }}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-10">
+        <ui-view></ui-view>
+    </div>
+
+</div>
+
+
+

@@ -19,3 +19,14 @@ class Message(models.Model):
 
     def __str__(self):
         return '{}-{}-{}'.format(self.channel.company, self.sender, self.content)
+
+
+class DirectMessage(models.Model):
+    sender = models.ForeignKey(User, related_name='send_messages')
+    receiver = models.ForeignKey(User, related_name='messages')
+    date_created = models.DateTimeField(auto_now=True)
+    date_updated = models.DateTimeField(auto_now_add=True)
+    content = models.TextField()
+
+    def __str__(self):
+        return '{}-{}'.format(sender.sender, self.receiver)
