@@ -58,7 +58,6 @@ class ChannelMessagesCtrl {
             form.$setPristine();
             this.msgForm = {}; //reset form data
         });
-
     } 
 }
 
