@@ -3,3 +3,7 @@
 node_modules/*
 *.DS_Store
 static/app/node_modules/*
+static/app/build/*
+
+
+build/
