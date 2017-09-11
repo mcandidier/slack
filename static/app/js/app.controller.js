@@ -20,14 +20,17 @@ class IndexCtrl {
 }
 
 class CompanyDetailCtrl {
-    constructor($scope, CompanyService, $stateParams, localStorageService) {
+    constructor($scope, CompanyService, $stateParams, localStorageService, $uibModal) {
         'ngInject';
         this.CompanyService = CompanyService;
         this.init();
+        this.$uibModal = $uibModal;
     }
 
     addChannel() {
-        console.log('add channel');
+        this.$uibModal.open({
+          component: 'channelFormComponent',
+        });
     }
 
     init() {

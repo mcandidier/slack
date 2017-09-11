@@ -8,5 +8,4 @@ let ChannelFormComponent =  {
     controller: ChannelController,
 }
 
-
 export default ChannelFormComponent;

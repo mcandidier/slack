@@ -1,12 +1,20 @@
-<form name="channelForm" class="form" ng-submit="channelForm.$valid && ctrl.createChannel(form)">
-    <div class="form-group">
-        <input class="form-control" ng-model="form.name">
-    </div>
-    <div class="form-group">
-        <textarea ng-model="form.description"></textarea>
-    </div>
-    <div class="form-group">
-        <input type="checkbox" ng-model="form.private"/>
-    </div>
-    <button type="submit" class="btn btn-primary"></button>
-</form>
+<div class="modal-header">
+    <h3 class="modal-title">New Channel</h3>
+</div>
+
+ <div class="modal-body">
+     <form name="channelForm" class="form" ng-submit="channelForm.$valid && ctrl.createChannel(form)">
+        <div class="form-group">
+            <input class="form-control" ng-model="form.name" placeholder="Your channel name">
+        </div>
+        <div class="form-group">
+            <textarea ng-model="form.description" class="form-control" placeholder="Channel description"></textarea>
+        </div>
+        <div class="form-group">
+            <input id="is_private" type="checkbox" ng-model="form.private" />
+            <label for="is_private">Private channel</label>
+        </div>
+        <button type="submit" class="btn btn-primary pull-right">Create</button>
+        <div class="clearfix"></div>
+    </form>
+ </div>
