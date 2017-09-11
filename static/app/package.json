@@ -6,7 +6,7 @@
   "scripts": {
     "babel": "babel --presets es2015 js/main.js -o build/main.bundle.js",
     "start": "http-server",
-    "webpack": "webpack",
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,6 +14,7 @@
   "devDependencies": {
     "angular": "^1.6.6",
     "angular-local-storage": "^0.7.1",
+    "angular-ui-bootstrap": "^2.5.0",
     "angular-ui-router": "^0.4.2",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",

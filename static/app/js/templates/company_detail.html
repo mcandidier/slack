@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-sm-2">
     <h5 class="pull-left">Channels<span>({{ctrl.channels.length}})</span></h5>
-    <a class="pull-left btn-link" style="padding: 8px">Add</a>
+    <a class="pull-left btn-link" style="padding: 8px" ng-click="ctrl.addChannel()">Add</a>
     <span class="clearfix"></span>
     <ul>
         <li ng-repeat="channel in ctrl.channels">

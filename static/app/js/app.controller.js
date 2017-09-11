@@ -26,6 +26,10 @@ class CompanyDetailCtrl {
         this.init();
     }
 
+    addChannel() {
+        console.log('add channel');
+    }
+
     init() {
         this.CompanyService.getAllChannels().then(resp => {
             this.channels = resp.data;
