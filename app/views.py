@@ -1,18 +1,23 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
+
 
 from django.views.generic import View
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.db.models import Q
 
-from .models.channel import Channel
+from .models.channel import Channel, ChannelMembers
 from .models.company import Company, CompanyMember 
 from .models.message import Message
-from .permissions import IsCompanyMember
+from .permissions import IsCompanyMember, IsChannelMember
 
 from .serializers import ChannelSerializer, MessageSerializer, CompanySerializer, CompanyMemberSerializer
+from . import signals
+
 
 class CompanyMixin(object):
     """ Company mixins, return list of methods for company.
@@ -22,25 +27,29 @@ class CompanyMixin(object):
 
 
 class ChannelViewSet(CompanyMixin, viewsets.ModelViewSet):
+    """Channel API 
+    """
     queryset = Channel.objects.all().order_by('-date_creatd')
     serializer_class = ChannelSerializer
     permission_classes = (IsAuthenticated, IsCompanyMember)
 
     def get_queryset(self):
         # return all channels of different companies for the authenticated user
-        return self.queryset.filter(company__id=self.get_active_company())
+        queryset = self.queryset.filter(company__id=self.get_active_company())
+        return queryset.filter(Q(private=False) | Q(private=True))
 
 
 class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):
+    """Channel messages API
+    """
     queryset =  Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = (IsAuthenticated, IsCompanyMember)
+    permission_classes = (IsAuthenticated, IsCompanyMember,)
 
     def get_queryset(self):
         # filter only the messages for user selected channel and active company 
         name = self.request.query_params.get('channel', None)
-        if name is not None:
-            return self.queryset.filter(channel__name=name, channel__company__id=self.get_active_company())
+        return self.queryset.filter(channel__name=name, channel__company__id=self.get_active_company())
 
     def perform_create(self, serializer):
         channel = Channel.objects.get(name=self.request.data['channel'], company__id=self.get_active_company())
@@ -48,6 +57,8 @@ class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
+    """Company API
+    """
     queryset = Company.objects.all().order_by('-date_created')
     serializer_class = CompanySerializer
 

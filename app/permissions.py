@@ -1,5 +1,9 @@
 from rest_framework import permissions
 from .models.company import Company, CompanyMember
+from .models.channel import Channel, ChannelMembers
+
+from django.shortcuts import get_object_or_404
+
 
 class IsCompanyMember(permissions.BasePermission):
 
@@ -8,3 +12,19 @@ class IsCompanyMember(permissions.BasePermission):
         if active_company is not None:
             return CompanyMember.objects.filter(member=request.user, company__id=int(active_company))
         return False
+
+
+class IsChannelMember(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        name = request.query_params.get('channel', None)
+        if request.method == 'POST':
+            name =request.data['channel']
+            
+        channel = get_object_or_404(Channel, name=name, company__id=int(request.session.get('active_company')))
+        if channel.private:
+            channel_members_ids = ChannelMembers.objects.get(channel=channel).values_list('member__id', flat=True)
+            if request.user.id in channel_members_ids:
+                return True
+            return False
+        return True

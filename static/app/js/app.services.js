@@ -33,4 +33,8 @@ export default class CompanyService {
         return this.http.post(this.AppConstant.apiUrl + 'messages/', form);
     }
 
+
+    createChannel(form) {
+        return this.http.post(this.AppConstant.apiUrl + 'channels/', post);
+    }
 }

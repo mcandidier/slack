@@ -23744,6 +23744,11 @@ var CompanyService = function () {
         value: function sendChannelMessage(form) {
             return this.http.post(this.AppConstant.apiUrl + 'messages/', form);
         }
+    }, {
+        key: 'createChannel',
+        value: function createChannel(form) {
+            return this.http.post(this.AppConstant.apiUrl + 'channels/', post);
+        }
     }]);
 
     return CompanyService;
