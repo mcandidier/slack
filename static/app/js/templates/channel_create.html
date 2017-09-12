@@ -3,18 +3,20 @@
 </div>
 
  <div class="modal-body">
-     <form name="channelForm" class="form" ng-submit="channelForm.$valid && ctrl.createChannel(form)">
+     <form name="channelForm" class="form" ng-submit="ctrl.submit(channelForm)" novalidate="">
         <div class="form-group">
-            <input class="form-control" ng-model="form.name" placeholder="Your channel name">
+            <input class="form-control" ng-model="ctrl.form.name" placeholder="Your channel name" required="">
         </div>
         <div class="form-group">
-            <textarea ng-model="form.description" class="form-control" placeholder="Channel description"></textarea>
+            <textarea ng-model="ctrl.form.description" class="form-control" placeholder="Channel description" required=""></textarea>
         </div>
         <div class="form-group">
-            <input id="is_private" type="checkbox" ng-model="form.private" />
+            <input id="is_private" type="checkbox" ng-model="ctrl.form.private" />
             <label for="is_private">Private channel</label>
         </div>
         <button type="submit" class="btn btn-primary pull-right">Create</button>
         <div class="clearfix"></div>
     </form>
  </div>
+
+

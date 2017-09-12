@@ -15,6 +15,9 @@ class Channel(models.Model):
     def __str__(self):
         return '{}-{}'.format(self.company, self.name)
 
+    class Meta:
+        unique_together = (("company", "name"),)
+
 
 class ChannelMembers(models.Model):
     channel = models.ForeignKey(Channel)

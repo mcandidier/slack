@@ -25,6 +25,12 @@ class CompanyMixin(object):
     def get_active_company(self):
         return int(self.request.session.get('active_company'))
 
+    def get_channel(self):
+        name = self.request.query_params.get('channel', None)
+        if name is not None:
+            return Channel.objects.get(name=name, company__id=self.get_active_company())
+        return None
+
 
 class ChannelViewSet(CompanyMixin, viewsets.ModelViewSet):
     """Channel API 
@@ -38,6 +44,10 @@ class ChannelViewSet(CompanyMixin, viewsets.ModelViewSet):
         queryset = self.queryset.filter(company__id=self.get_active_company())
         return queryset.filter(Q(private=False) | Q(private=True))
 
+    def perform_create(self, serializer):
+        # create new channel for company
+        serializer.save(company=Company.objects.get(id=self.get_active_company()), owner=self.request.user)
+
 
 class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):
     """Channel messages API
@@ -48,8 +58,7 @@ class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         # filter only the messages for user selected channel and active company 
-        name = self.request.query_params.get('channel', None)
-        return self.queryset.filter(channel__name=name, channel__company__id=self.get_active_company())
+        return self.queryset.filter(channel=self.get_channel())
 
     def perform_create(self, serializer):
         channel = Channel.objects.get(name=self.request.data['channel'], company__id=self.get_active_company())

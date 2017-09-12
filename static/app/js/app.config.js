@@ -11,7 +11,6 @@ function routesConfig($stateProvider, $urlRouterProvider, AppConstant) {
             controller: 'CompanyDetailCtrl',
             controllerAs: 'ctrl',
             templateUrl: AppConstant.templateUrl + 'company_detail.html'
-
         })
         .state('company.detail.channel', {
             url: '{channel}/',

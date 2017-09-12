@@ -6,6 +6,9 @@ export default class CompanyService {
         this.AppConstant = AppConstant;
         this.localStorageService = localStorageService;
         this.members = {};
+        this.channels = [];
+
+        this.getAllChannels();
     }
 
     companyList() {
@@ -18,7 +21,9 @@ export default class CompanyService {
     }
 
     getAllChannels() {
-        return this.http.get(this.AppConstant.apiUrl + 'channels/');
+        return this.http.get(this.AppConstant.apiUrl + 'channels/').then( resp => {
+            this.channels = resp.data;
+        });
     }
 
     getAllMembers() {
@@ -35,6 +40,6 @@ export default class CompanyService {
 
 
     createChannel(form) {
-        return this.http.post(this.AppConstant.apiUrl + 'channels/', post);
+        return this.http.post(this.AppConstant.apiUrl + 'channels/', form);
     }
 }

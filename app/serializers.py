@@ -4,11 +4,12 @@ from .models.channel import Channel
 from .models.company import Company,CompanyMember
 from .models.message import Message
 
+
 class ChannelSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Channel
 		fields = '__all__'
-		read_only_fields = ('id',)
+		read_only_fields = ('id', 'owner', 'date_creatd', 'date_updated', 'company')
 
 
 class CompanySerializer(serializers.ModelSerializer):

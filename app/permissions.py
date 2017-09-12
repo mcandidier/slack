@@ -20,7 +20,7 @@ class IsChannelMember(permissions.BasePermission):
         name = request.query_params.get('channel', None)
         if request.method == 'POST':
             name =request.data['channel']
-            
+
         channel = get_object_or_404(Channel, name=name, company__id=int(request.session.get('active_company')))
         if channel.private:
             channel_members_ids = ChannelMembers.objects.get(channel=channel).values_list('member__id', flat=True)

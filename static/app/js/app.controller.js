@@ -23,20 +23,20 @@ class CompanyDetailCtrl {
     constructor($scope, CompanyService, $stateParams, localStorageService, $uibModal) {
         'ngInject';
         this.CompanyService = CompanyService;
-        this.init();
         this.$uibModal = $uibModal;
+        this.$scope = $scope;
+        this.init();
     }
 
     addChannel() {
         this.$uibModal.open({
-          component: 'channelFormComponent',
+          component: 'channelFormComponent'
         });
     }
 
     init() {
-        this.CompanyService.getAllChannels().then(resp => {
-            this.channels = resp.data;
-        });
+
+        this.$scope.$watchCollection('ctrl.CompanyService.channels', data => this.channels = data);
 
         this.CompanyService.getAllMembers().then( resp => {
             resp.data.map( user => {
