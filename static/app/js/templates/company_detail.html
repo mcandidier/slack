@@ -5,7 +5,11 @@
     <span class="clearfix"></span>
     <ul>
         <li ng-repeat="channel in ctrl.channels">
-            <a ui-sref="company.detail.channel({'channel': channel.name })"><span ng-if="channel.private" class="glyphicons glyphicons-lock">lock</span>{{ channel.name}}</a>
+            <span ng-if="channel.private" class="glyphicon glyphicon-lock pull-left"></span>
+            <a ui-sref="company.detail.channel({'channel': channel.name })">
+                {{ channel.name}}
+                <span class="clearfix"></span>
+            </a>
         </li>
     </ul>
 
