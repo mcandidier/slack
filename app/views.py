@@ -15,7 +15,15 @@ from .models.company import Company, CompanyMember
 from .models.message import Message
 from .permissions import IsCompanyMember, IsChannelMember
 
-from .serializers import ChannelSerializer, MessageSerializer, CompanySerializer, CompanyMemberSerializer
+from .serializers import (
+    ChannelSerializer,
+    MessageSerializer,
+    CompanySerializer,
+    CompanyMemberSerializer,
+    ChannelMemberSerializer
+)
+
+
 from . import signals
 
 
@@ -47,6 +55,17 @@ class ChannelViewSet(CompanyMixin, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # create new channel for company
         serializer.save(company=Company.objects.get(id=self.get_active_company()), owner=self.request.user)
+
+
+class ChannelMembersViewSet(CompanyMixin, viewsets.ModelViewSet):
+    """Channel Members API
+    """
+    queryset = ChannelMembers.objects.all()
+    serializer_class = ChannelMemberSerializer
+    permission_classes = (IsAuthenticated, IsCompanyMember)
+
+    def get_queryset(self):
+        return self.queryset.filter(channel=self.get_channel())
 
 
 class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):

@@ -6,7 +6,7 @@
     <ul>
         <li ng-repeat="channel in ctrl.channels">
             <span ng-if="channel.private" class="glyphicon glyphicon-lock pull-left"></span>
-            <a ui-sref="company.detail.channel({'channel': channel.name })">
+            <a href="" ng-click="ctrl.gotoChannelDetail(channel)">
                 {{ channel.name}}
                 <span class="clearfix"></span>
             </a>

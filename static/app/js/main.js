@@ -10,6 +10,8 @@ import AppConstant from './app.constant';
 import {IndexCtrl, CompanyDetailCtrl, ChannelMessagesCtrl} from './app.controller';
 import CompanyService from './app.services';
 import ChannelFormComponent from './components/channel.component';
+import ChannelMemberComponent from './components/channel_members.component';
+
 
 const requires = [
     'ui.router',
@@ -33,7 +35,7 @@ app.controller('CompanyDetailCtrl', CompanyDetailCtrl);
 
 // app components
 app.component('channelFormComponent', ChannelFormComponent)
-
+app.component('channelMemberComponent', ChannelMemberComponent)
 // app configs
 app.config(routesConfig);
 app.config(csrfConfig);

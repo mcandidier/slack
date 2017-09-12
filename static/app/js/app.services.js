@@ -7,6 +7,7 @@ export default class CompanyService {
         this.localStorageService = localStorageService;
         this.members = {};
         this.channels = [];
+        this.currentChannel = undefined;
 
         this.getAllChannels();
     }
@@ -41,5 +42,11 @@ export default class CompanyService {
 
     createChannel(form) {
         return this.http.post(this.AppConstant.apiUrl + 'channels/', form);
+    }
+
+    getChannelMembers(channel) {
+        /* get all members for private channels only
+         */
+        return this.http.get(this.AppConstant.apiUrl + 'channel-members/?channel='+channel);
     }
 }

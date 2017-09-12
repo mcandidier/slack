@@ -20,11 +20,12 @@ class IndexCtrl {
 }
 
 class CompanyDetailCtrl {
-    constructor($scope, CompanyService, $stateParams, localStorageService, $uibModal) {
+    constructor($scope, CompanyService, $stateParams, localStorageService, $uibModal, $state) {
         'ngInject';
         this.CompanyService = CompanyService;
         this.$uibModal = $uibModal;
         this.$scope = $scope;
+        this.$state = $state;
         this.init();
     }
 
@@ -34,10 +35,14 @@ class CompanyDetailCtrl {
         });
     }
 
+    gotoChannelDetail(channel) {
+        this.CompanyService.currentChannel = channel; 
+        this.$state.go('company.detail.channel', {'channel': channel.name});
+    }
+
     init() {
 
         this.$scope.$watchCollection('ctrl.CompanyService.channels', data => this.channels = data);
-
         this.CompanyService.getAllMembers().then( resp => {
             resp.data.map( user => {
                 this.CompanyService.members[user.member] = user;

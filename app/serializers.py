@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models.channel import Channel
+from .models.channel import Channel, ChannelMembers
 from .models.company import Company,CompanyMember
 from .models.message import Message
 
@@ -10,6 +10,13 @@ class ChannelSerializer(serializers.ModelSerializer):
 		model = Channel
 		fields = '__all__'
 		read_only_fields = ('id', 'owner', 'date_creatd', 'date_updated', 'company')
+
+
+class ChannelMemberSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ChannelMembers
+		fields = '__all__'
+		read_only_fields = ('id', 'channel', 'member',)
 
 
 class CompanySerializer(serializers.ModelSerializer):

@@ -1,18 +1,27 @@
-<div class="message-block" style="height: 75vh;
+<div class="message-block row" style="height: 75vh;
     overflow-y: auto;">
-    <div class="media" ng-repeat="message in ctrl.messages">
-      <div class="media-left">
-        <img ng-src="/static/app/image/default_avatar.png" class="media-object img-circle" style="width:40px">
-      </div>
-      <div class="media-body">
-        <h5 class="media-heading">{{ ctrl.CompanyService.members[message.sender].name }}<span class="text-muted small">    {{ message.date_created | date:'medium' }}</span></h5>
-        <p>{{ message.content }}</p>
-      </div>
+
+    <div class="col-sm-8">
+        <div class="media" ng-repeat="message in ctrl.messages">
+          <div class="media-left">
+            <img ng-src="/static/app/image/default_avatar.png" class="media-object img-circle" style="width:40px">
+          </div>
+          <div class="media-body">
+            <h5 class="media-heading">{{ ctrl.CompanyService.members[message.sender].name }}<span class="text-muted small">    {{ message.date_created | date:'medium' }}</span></h5>
+            <p>{{ message.content }}</p>
+          </div>
+        </div>
+
+        <div ng-show="!ctrl.messages.length">
+            <h6>No message yet.</h6>
+        </div>
     </div>
 
-    <div ng-show="!ctrl.messages.length">
-        <h6>No message yet.</h6>
+
+    <div class="col-sm-4">
+        <channel-member-component ng-if="ctrl.CompanyService.currentChannel.private"></channel-member-component>
     </div>
+
 </div>
 
 <section>

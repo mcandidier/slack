@@ -1,0 +1,7 @@
+<h6 class="pull-left">Channel Members ({{ ctrl.channelMembers.length}}) <a href="">invite</a>
+</h6>
+<span class="clearfix"></span>
+<ul>
+    <li ng-repeat="user in ctrl.channelMembers"<a href="">
+    {{ ctrl.CompanyService.members[user.member].name  }}</a></li>
+</ul>
