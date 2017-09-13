@@ -41,7 +41,6 @@ class CompanyDetailCtrl {
     }
 
     init() {
-
         this.$scope.$watchCollection('ctrl.CompanyService.channels', data => this.channels = data);
         this.CompanyService.getAllMembers().then( resp => {
             resp.data.map( user => {

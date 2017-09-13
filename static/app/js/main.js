@@ -1,7 +1,6 @@
 import angular from 'angular';
 import 'angular-ui-router';
 import 'angular-local-storage';
-
 import 'angular-ui-bootstrap';
 
 // app scripts

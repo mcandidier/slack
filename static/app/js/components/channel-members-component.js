@@ -5,6 +5,7 @@ class ChannelMembersController {
         this.stateParams = $stateParams;
         this.allMembers = CompanyService.members;
         this.uibModal = $uibModal;
+        this.channelMembers = [];
     }
 
     $onInit() {
@@ -16,16 +17,27 @@ class ChannelMembersController {
 
     inviteMember() {
         this.uibModal.open({
-          component: 'inviteComponent'
+            component: 'inviteComponent',
+            resolve: {
+                members: () => {
+                  return this.channelMembers.map( user => user.member);
+                }
+            }
         });
-    }    
-
+    } 
 }
+
 
 let ChannelMemberComponent = {
     templateUrl: '/static/app/js/templates/channel/members.html',
     controller: ChannelMembersController,
-    controllerAs: 'ctrl'
+    controllerAs: 'ctrl',
+    bindings: {
+        resolve: '<',
+        close: '&',
+        dismiss: '&',
+        form: '<',
+    }
 }
 
 

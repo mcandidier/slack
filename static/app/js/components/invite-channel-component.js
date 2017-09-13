@@ -4,10 +4,12 @@ class InviteChannelMember {
         this.$scope = $scope;
         this.CompanyService = CompanyService;
         this.form = {};
+        this.channelMembers = [];
     }
 
     $onInit() {
-        console.log('init invite member');
+        const members =  _.map(this.CompanyService.members, user => user.member);
+        this.selections = _.difference(members, this.resolve.members);
     }
 
     add() {
@@ -23,7 +25,7 @@ let InviteComponent = {
         resolve: '<',
         close: '&',
         dismiss: '&',
-        form: '<'
+        form: '<',
     }
 }
 

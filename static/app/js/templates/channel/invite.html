@@ -4,10 +4,9 @@
 
  <div class="modal-body">
     <ul>
-        <li ng-repeat="member in ctrl.CompanyService.members">
-            {{ member.name }} <span class="label label-info">invite</span>
+        <li ng-repeat="id in ctrl.selections track by $index"> 
+            {{  ctrl.CompanyService.members[id].name }}
+            <button type="button" class="btn btn-xs btn-primary">invite</button>
         </li>
     </ul>
  </div>
-
-
