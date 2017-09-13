@@ -9,8 +9,9 @@ import {routesConfig, csrfConfig} from './app.config';
 import AppConstant from './app.constant';
 import {IndexCtrl, CompanyDetailCtrl, ChannelMessagesCtrl} from './app.controller';
 import CompanyService from './app.services';
-import ChannelFormComponent from './components/channel.component';
-import ChannelMemberComponent from './components/channel_members.component';
+import ChannelFormComponent from './components/channel-component';
+import ChannelMemberComponent from './components/channel-members-component';
+import InviteComponent from './components/invite-channel-component';
 
 
 const requires = [
@@ -36,6 +37,8 @@ app.controller('CompanyDetailCtrl', CompanyDetailCtrl);
 // app components
 app.component('channelFormComponent', ChannelFormComponent)
 app.component('channelMemberComponent', ChannelMemberComponent)
+app.component('inviteComponent', InviteComponent)
+
 // app configs
 app.config(routesConfig);
 app.config(csrfConfig);

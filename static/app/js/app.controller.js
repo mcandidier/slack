@@ -53,11 +53,13 @@ class CompanyDetailCtrl {
 
 
 class ChannelMessagesCtrl {
-    constructor($scope, CompanyService, $stateParams) {
+    constructor($scope, CompanyService, $stateParams, $uibModal) {
         'ngInject';
         this.CompanyService = CompanyService;
         this.channelName = $stateParams.channel;
-        this.msgForm = {};        
+        this.msgForm = {};     
+        this.$uibModal = $uibModal;
+
         CompanyService.getAllMessages(this.channelName).then(resp => {
             this.messages = resp.data;
         });
@@ -72,6 +74,7 @@ class ChannelMessagesCtrl {
         });
     } 
 }
+
 
 export {
     IndexCtrl,

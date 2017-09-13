@@ -1,8 +1,10 @@
 class ChannelMembersController {
-    constructor(CompanyService, $stateParams) {
+    constructor(CompanyService, $stateParams, $uibModal) {
         'ngInject';
         this.CompanyService = CompanyService;
         this.stateParams = $stateParams;
+        this.allMembers = CompanyService.members;
+        this.uibModal = $uibModal;
     }
 
     $onInit() {
@@ -11,11 +13,17 @@ class ChannelMembersController {
             this.channelMembers = resp.data;
         });
     }
+
+    inviteMember() {
+        this.uibModal.open({
+          component: 'inviteComponent'
+        });
+    }    
+
 }
 
-
 let ChannelMemberComponent = {
-    templateUrl: '/static/app/js/templates/private_channel_members.html',
+    templateUrl: '/static/app/js/templates/channel/members.html',
     controller: ChannelMembersController,
     controllerAs: 'ctrl'
 }
