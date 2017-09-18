@@ -15,6 +15,7 @@ from .models.channel import Channel, ChannelMembers
 from .models.company import Company, CompanyMember 
 from .models.message import Message
 from .permissions import IsCompanyMember, IsChannelMember
+from . import signals
 
 from .serializers import (
     ChannelSerializer,
@@ -25,20 +26,36 @@ from .serializers import (
 )
 
 
-from . import signals
-
-
 class CompanyMixin(object):
     """ Company mixins, return list of methods for company.
     """
-    def get_active_company(self):
-        return int(self.request.session.get('active_company'))
-
-    def get_channel(self):
-        name = self.request.query_params.get('channel', None) 
-        if name is not None:
-            return Channel.objects.get(name=name, company__id=self.get_active_company())
+    @property
+    def selected_company(self):
+        company_name = self.kwargs.get('company_name', None)
+        if company_name is not None:
+            return Company.objects.get(name=company_name)
         return None
+
+    @property
+    def selected_channel(self):
+        channel_name =  self.kwargs.get('channel_name', None) 
+        if channel_name is not None:
+            return Channel.objects.get(name=channel_name, company=self.selected_company)
+        return None
+
+
+class CompanyViewSet(CompanyMixin, viewsets.ModelViewSet):
+    """Company API
+    """
+    queryset = Company.objects.all().order_by('-date_created')
+    serializer_class = CompanySerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'name'
+
+    def get_queryset(self):
+        # show all the companies which he is member
+        user_companies = self.request.user.memberships.all().values_list('company__id', flat=True)
+        return self.queryset.filter(id__in=user_companies)
 
 
 class ChannelViewSet(CompanyMixin, viewsets.ModelViewSet):
@@ -47,16 +64,17 @@ class ChannelViewSet(CompanyMixin, viewsets.ModelViewSet):
     queryset = Channel.objects.all().order_by('-date_creatd')
     serializer_class = ChannelSerializer
     permission_classes = (IsAuthenticated, IsCompanyMember)
+    lookup_field = 'name'
 
-    def get_queryset(self):
+
+    def get_queryset(self, *args, **kwargs):
         # return all channels of different companies for the authenticated user
-        queryset = self.queryset.filter(company__id=self.get_active_company())
+        queryset = self.queryset.filter(company=self.selected_company)
         return queryset.filter(Q(private=False) | Q(private=True))
 
     def perform_create(self, serializer):
         # create new channel for company
-        company = Company.objects.get(id=self.get_active_company())
-        serializer.save(company=company, owner=self.request.user)
+        serializer.save(company=selected_company, owner=self.request.user)
 
 
 class ChannelMembersViewSet(CompanyMixin, viewsets.ModelViewSet):
@@ -67,14 +85,15 @@ class ChannelMembersViewSet(CompanyMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, IsCompanyMember, IsChannelMember)
 
     def get_queryset(self):
-        return self.queryset.filter(channel=self.get_channel())
+        return self.queryset.filter(channel=self.selected_channel)
 
     def perform_create(self, serializer):
         # invite member to a channel
-        # TODO: move get channel to mixin. 
-        channel = Channel.objects.get(name=self.request.data['channel'], company=self.get_active_company())
         member = get_object_or_404(User, id=self.request.data['member'])
-        serializer.save(member=member, channel=channel)
+        serializer.save(member=member, channel=self.selected_channel)
+
+    def destroy(self):
+        import pdb; pdb.set_trace()
 
 
 class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):
@@ -86,35 +105,20 @@ class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         # filter only the messages for user selected channel and active company 
-        return self.queryset.filter(channel=self.get_channel())
+        return self.queryset.filter(channel=self.selected_channel)
 
     def perform_create(self, serializer):
-        # TODO: move get channel to mixin. 
-        channel = Channel.objects.get(name=self.request.data['channel'], company__id=self.get_active_company())
-        serializer.save(sender=self.request.user, channel=channel)
+        serializer.save(sender=self.request.user, channel=self.selected_channel)
 
 
-class CompanyViewSet(viewsets.ModelViewSet):
-    """Company API
-    """
-    queryset = Company.objects.all().order_by('-date_created')
-    serializer_class = CompanySerializer
-
-    def get_queryset(self):
-        # show all the companies which he is member
-        user_companies = self.request.user.memberships.all().values_list('company__id', flat=True)
-        return self.queryset.filter(id__in=user_companies)
-
-
-class CompanyMemberViewSet(viewsets.ModelViewSet):
+class CompanyMemberViewSet(CompanyMixin, viewsets.ModelViewSet):
     queryset = CompanyMember.objects.all()
     serializer_class = CompanyMemberSerializer
     permission_classes = (IsAuthenticated, IsCompanyMember)
 
     def get_queryset(self):
         # display all the members for the active company
-        company_id = self.request.session.get('active_company')
-        return self.queryset.filter(company__id=int(company_id))
+        return self.queryset.filter(company=self.selected_company)
 
 
 @method_decorator(csrf_exempt, name='dispatch')

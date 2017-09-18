@@ -10,6 +10,7 @@ class ChannelSerializer(serializers.ModelSerializer):
 		model = Channel
 		fields = '__all__'
 		read_only_fields = ('id', 'owner', 'date_creatd', 'date_updated', 'company')
+		lookup_field = 'name'
 
 
 class ChannelMemberSerializer(serializers.ModelSerializer):
@@ -24,6 +25,7 @@ class CompanySerializer(serializers.ModelSerializer):
 		model = Company
 		fields = ('id', 'name', 'description', 'date_created',)
 		read_only_fields = ('id',)
+		lookup_field = 'name'
 
 
 class MessageSerializer(serializers.ModelSerializer):
