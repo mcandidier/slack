@@ -74,7 +74,7 @@ class ChannelViewSet(CompanyMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # create new channel for company
-        serializer.save(company=selected_company, owner=self.request.user)
+        serializer.save(company=self.selected_company, owner=self.request.user)
 
 
 class ChannelMembersViewSet(CompanyMixin, viewsets.ModelViewSet):
