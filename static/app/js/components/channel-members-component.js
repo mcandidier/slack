@@ -9,8 +9,10 @@ class ChannelMembersController {
     }
 
     $onInit() {
-        const name = this.stateParams.channel;
-        this.CompanyService.getChannelMembers(name).then( resp => {
+        const channel = this.stateParams.channel;
+        const company = this.stateParams.company;
+        console.log('ChannelMembersController')
+        this.CompanyService.getChannelMembers(company, channel).then( resp => {
             this.channelMembers = resp.data;
         });
     }
@@ -30,8 +32,13 @@ class ChannelMembersController {
         }, function () {
             console.log('xx');
         });
-
     } 
+
+    removeMember(member) {
+        this.CompanyService.removeMember(member).then( () => {
+            console.log('removing');
+        });
+    }
 }
 
 

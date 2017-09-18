@@ -12,10 +12,7 @@ class IndexCtrl {
     }
 
     companySelect(company) {
-        this.localStorageService.set('companyId', company.id);
-        this.CompanyService.setupCompany().then( () => {
-            this.state.go('company.detail', {'name': company.name});
-        });
+        this.state.go('company.detail', {'company': company.name});
     }
 }
 
@@ -26,6 +23,8 @@ class CompanyDetailCtrl {
         this.$uibModal = $uibModal;
         this.$scope = $scope;
         this.$state = $state;
+        this.stateParams = $stateParams;
+        this.localStorageService = localStorageService;
         this.init();
     }
 
@@ -36,13 +35,14 @@ class CompanyDetailCtrl {
     }
 
     gotoChannelDetail(channel) {
-        this.CompanyService.currentChannel = channel; 
         this.$state.go('company.detail.channel', {'channel': channel.name});
     }
 
     init() {
+        const company = this.stateParams.company;
+        this.CompanyService.getAllChannels(company);
         this.$scope.$watchCollection('ctrl.CompanyService.channels', data => this.channels = data);
-        this.CompanyService.getAllMembers().then( resp => {
+        this.CompanyService.getAllMembers(company).then( resp => {
             resp.data.map( user => {
                 this.CompanyService.members[user.member] = user;
             });
@@ -52,14 +52,15 @@ class CompanyDetailCtrl {
 
 
 class ChannelMessagesCtrl {
-    constructor($scope, CompanyService, $stateParams, $uibModal) {
+    constructor($scope, CompanyService, localStorageService, $stateParams, $uibModal) {
         'ngInject';
         this.CompanyService = CompanyService;
         this.channelName = $stateParams.channel;
         this.msgForm = {};     
         this.$uibModal = $uibModal;
+        this.localStorageService = localStorageService;
 
-        CompanyService.getAllMessages(this.channelName).then(resp => {
+        CompanyService.getAllMessages($stateParams.company, $stateParams.channel).then(resp => {
             this.messages = resp.data;
         });
     }

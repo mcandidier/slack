@@ -7,53 +7,44 @@ export default class CompanyService {
         this.localStorageService = localStorageService;
         this.members = {};
         this.channels = [];
-        this.currentChannel = undefined;
-
-        this.getAllChannels();
     }
 
     companyList() {
         return this.http.get(this.AppConstant.apiUrl + 'companies/');
     }
 
-    setupCompany() {
-        const companyId = this.localStorageService.get('companyId');
-        return this.http.get('/config/'+ companyId +'/');
+    getAllChannels(company) {
+        return this.http.get(this.AppConstant.apiUrl + `companies/${company}/channels/`).then( resp => this.channels = resp.data);
     }
 
-    getAllChannels() {
-        return this.http.get(this.AppConstant.apiUrl + 'channels/').then( resp => {
-            this.channels = resp.data;
-        });
+    getAllMembers(company) {
+        return this.http.get(this.AppConstant.apiUrl + `companies/${company}/members/`);
     }
 
-    getAllMembers() {
-        return this.http.get(this.AppConstant.apiUrl + 'members/');
+    getAllMessages(company, channel) {
+        return this.http.get(this.AppConstant.apiUrl + `companies/${company}/channels/${channel}/messages/`);
     }
 
-    getAllMessages(channel_name) {
-        return this.http.get(this.AppConstant.apiUrl + 'messages/?channel='+channel_name);
+    sendChannelMessage(company, channel, form) {
+        return this.http.post(this.AppConstant.apiUrl + `companies/${company}/channels/${channel}/messages/`, form);
     }
-
-    sendChannelMessage(form) {
-        return this.http.post(this.AppConstant.apiUrl + 'messages/', form);
-    }
-
 
     createChannel(form) {
         return this.http.post(this.AppConstant.apiUrl + 'channels/', form);
     }
 
-    getChannelMembers(channel) {
-        /* get all members for private channels only
-         */
-        return this.http.get(this.AppConstant.apiUrl + 'channel-members/?channel='+channel);
+    getChannelMembers(company, channel) {
+        // get all members for private channels only
+        return this.http.get(this.AppConstant.apiUrl + `companies/${company}/channels/${channel}/members/`);
     }
 
     inviteToChannel(form) {
-        /* invite selected user 
-         */
+        // invite selected user
         return this.http.post(this.AppConstant.apiUrl + 'channel-members/', form);
+    }
+
+    removeMember(form) {
+        return this.http.delete(this.AppConstant.apiUrl + 'channel-members/', form)
     }
 
 

@@ -3,5 +3,7 @@
 <span class="clearfix"></span>
 <ul>
     <li ng-repeat="user in ctrl.channelMembers"<a href="">
-    {{ ctrl.CompanyService.members[user.member].name  }}</a></li>
+    {{ ctrl.CompanyService.members[user.member].name  }}</a>
+    <a href="" ng-click="ctrl.removeMember(member)">remove</a>
+    </li>
 </ul>
