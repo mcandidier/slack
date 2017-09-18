@@ -11,7 +11,6 @@ class ChannelController {
         /* Create new channel for active project. 
          * push new data after creation.
          */
-
         if(form.$valid) {
             this.CompanyService.createChannel(this.form).then( resp => { 
                 this.CompanyService.channels.push(resp.data);

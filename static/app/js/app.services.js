@@ -49,4 +49,12 @@ export default class CompanyService {
          */
         return this.http.get(this.AppConstant.apiUrl + 'channel-members/?channel='+channel);
     }
+
+    inviteToChannel(form) {
+        /* invite selected user 
+         */
+        return this.http.post(this.AppConstant.apiUrl + 'channel-members/', form);
+    }
+
+
 }

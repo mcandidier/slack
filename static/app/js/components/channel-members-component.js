@@ -16,7 +16,7 @@ class ChannelMembersController {
     }
 
     inviteMember() {
-        this.uibModal.open({
+        let modalInstance = this.uibModal.open({
             component: 'inviteComponent',
             resolve: {
                 members: () => {
@@ -24,6 +24,13 @@ class ChannelMembersController {
                 }
             }
         });
+
+        modalInstance.result.then( newMember => {
+            this.channelMembers.push(newMember);
+        }, function () {
+            console.log('xx');
+        });
+
     } 
 }
 

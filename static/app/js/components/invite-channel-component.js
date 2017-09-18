@@ -1,19 +1,22 @@
 class InviteChannelMember {
-    constructor($scope, CompanyService) {
+    constructor($scope, CompanyService, $stateParams) {
         'ngInject';
         this.$scope = $scope;
         this.CompanyService = CompanyService;
         this.form = {};
-        this.channelMembers = [];
+        this.$stateParams = $stateParams;
     }
 
-    $onInit() {
+    $onInit() {        
         const members =  _.map(this.CompanyService.members, user => user.member);
         this.selections = _.difference(members, this.resolve.members);
     }
 
-    add() {
-        console.log('add');
+    invite(user) {
+        const form = {'member': user, 'channel': this.$stateParams.channel};
+        this.CompanyService.inviteToChannel(form).then( resp => {
+            this.close({$value: resp.data});
+        });
     }
 }
 
@@ -25,7 +28,6 @@ let InviteComponent = {
         resolve: '<',
         close: '&',
         dismiss: '&',
-        form: '<',
     }
 }
 
