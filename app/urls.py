@@ -5,11 +5,11 @@ from django.conf.urls import url, include
 """
 API endpoint structure.
     /companies
-    /companies/{pk}/
-    /companies/{company_pk}/channels
-    /companies/{company_pk}/channels/{pk}/
-    /companies/{company_pk}/channels/{channel_pk}/messages/
-    /companies/{company_pk}/channels/{channel_pk}/members/
+    /companies/{name}/
+    /companies/{name}/channels
+    /companies/{name}/channels/{channelName}/
+    /companies/{name}/channels/{channelName}/messages/
+    /companies/{name}/channels/{channelName}/members/
 """
 
 router = routers.DefaultRouter() 
@@ -17,6 +17,7 @@ router.register(r'companies', views.CompanyViewSet, base_name='companies')
 
 company_router = routers.NestedSimpleRouter(router, r'companies', lookup='company')
 company_router.register(r'channels', views.ChannelViewSet, base_name='channels')
+company_router.register(r'members', views.CompanyMemberViewSet, base_name='channel-members')
 
 channel_router = routers.NestedSimpleRouter(company_router, r'channels', lookup='channel')
 channel_router.register(r'messages', views.MessageViewSet, base_name='messages')
