@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.db.models import Q
+from django.contrib.auth.models import User
 
 from .models.channel import Channel, ChannelMembers
 from .models.company import Company, CompanyMember 
@@ -34,7 +35,7 @@ class CompanyMixin(object):
         return int(self.request.session.get('active_company'))
 
     def get_channel(self):
-        name = self.request.query_params.get('channel', None)
+        name = self.request.query_params.get('channel', None) 
         if name is not None:
             return Channel.objects.get(name=name, company__id=self.get_active_company())
         return None
@@ -54,7 +55,8 @@ class ChannelViewSet(CompanyMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # create new channel for company
-        serializer.save(company=Company.objects.get(id=self.get_active_company()), owner=self.request.user)
+        company = Company.objects.get(id=self.get_active_company())
+        serializer.save(company=company, owner=self.request.user)
 
 
 class ChannelMembersViewSet(CompanyMixin, viewsets.ModelViewSet):
@@ -62,10 +64,17 @@ class ChannelMembersViewSet(CompanyMixin, viewsets.ModelViewSet):
     """
     queryset = ChannelMembers.objects.all()
     serializer_class = ChannelMemberSerializer
-    permission_classes = (IsAuthenticated, IsCompanyMember)
+    permission_classes = (IsAuthenticated, IsCompanyMember, IsChannelMember)
 
     def get_queryset(self):
         return self.queryset.filter(channel=self.get_channel())
+
+    def perform_create(self, serializer):
+        # invite member to a channel
+        # TODO: move get channel to mixin. 
+        channel = Channel.objects.get(name=self.request.data['channel'], company=self.get_active_company())
+        member = get_object_or_404(User, id=self.request.data['member'])
+        serializer.save(member=member, channel=channel)
 
 
 class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):
@@ -73,13 +82,14 @@ class MessageViewSet(CompanyMixin, viewsets.ModelViewSet):
     """
     queryset =  Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = (IsAuthenticated, IsCompanyMember,)
+    permission_classes = (IsAuthenticated, IsCompanyMember, IsChannelMember)
 
     def get_queryset(self):
         # filter only the messages for user selected channel and active company 
         return self.queryset.filter(channel=self.get_channel())
 
     def perform_create(self, serializer):
+        # TODO: move get channel to mixin. 
         channel = Channel.objects.get(name=self.request.data['channel'], company__id=self.get_active_company())
         serializer.save(sender=self.request.user, channel=channel)
 
