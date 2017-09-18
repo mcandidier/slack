@@ -18,12 +18,12 @@ class IsChannelMember(permissions.BasePermission):
 
     def has_permission(self, request, view):
         name = request.query_params.get('channel', None)
-        if request.method == 'POST':
-            name =request.data['channel']
+        if name is None and request.method == 'POST':
+            name = request.data['channel']
 
         channel = get_object_or_404(Channel, name=name, company__id=int(request.session.get('active_company')))
         if channel.private:
-            channel_members_ids = ChannelMembers.objects.get(channel=channel).values_list('member__id', flat=True)
+            channel_members_ids = ChannelMembers.objects.filter(channel=channel).values_list('member__id', flat=True)
             if request.user.id in channel_members_ids:
                 return True
             return False
