@@ -1,7 +1,8 @@
 class ChannelController {
-    constructor(CompanyService) {
+    constructor(CompanyService, $stateParams) {
         'ngInject';
         this.CompanyService = CompanyService;
+        this.stateParams = $stateParams;
     }
 
     $onInit() {
@@ -11,8 +12,9 @@ class ChannelController {
         /* Create new channel for active project. 
          * push new data after creation.
          */
+        console.log(this.form)
         if(form.$valid) {
-            this.CompanyService.createChannel(this.form).then( resp => { 
+            this.CompanyService.createChannel(this.stateParams.company, this.form).then( resp => { 
                 this.CompanyService.channels.push(resp.data);
                 this.close({$value: 'close'});
             });

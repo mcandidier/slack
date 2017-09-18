@@ -52,13 +52,12 @@ class CompanyDetailCtrl {
 
 
 class ChannelMessagesCtrl {
-    constructor($scope, CompanyService, localStorageService, $stateParams, $uibModal) {
+    constructor($scope, CompanyService, $stateParams, $uibModal) {
         'ngInject';
         this.CompanyService = CompanyService;
-        this.channelName = $stateParams.channel;
-        this.msgForm = {};     
+        this.$stateParams = $stateParams;
         this.$uibModal = $uibModal;
-        this.localStorageService = localStorageService;
+        this.msgForm = {}; 
 
         CompanyService.getAllMessages($stateParams.company, $stateParams.channel).then(resp => {
             this.messages = resp.data;
@@ -66,13 +65,14 @@ class ChannelMessagesCtrl {
     }
 
     sendMessage(form, data) {
-        data.channel = this.channelName;
-        this.CompanyService.sendChannelMessage(data).then( resp => {
+        const channel = data.channel = this.$stateParams.channel;
+        const company = this.$stateParams.company;
+        this.CompanyService.sendChannelMessage(company, channel, data).then( resp => {
             this.messages.push(resp.data);
             form.$setPristine();
             this.msgForm = {}; //reset form data
         });
-    } 
+    }
 }
 
 

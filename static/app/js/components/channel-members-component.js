@@ -11,7 +11,6 @@ class ChannelMembersController {
     $onInit() {
         const channel = this.stateParams.channel;
         const company = this.stateParams.company;
-        console.log('ChannelMembersController')
         this.CompanyService.getChannelMembers(company, channel).then( resp => {
             this.channelMembers = resp.data;
         });

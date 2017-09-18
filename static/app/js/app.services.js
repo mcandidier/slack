@@ -29,8 +29,8 @@ export default class CompanyService {
         return this.http.post(this.AppConstant.apiUrl + `companies/${company}/channels/${channel}/messages/`, form);
     }
 
-    createChannel(form) {
-        return this.http.post(this.AppConstant.apiUrl + 'channels/', form);
+    createChannel(company, form) {
+        return this.http.post(this.AppConstant.apiUrl + `companies/${company}/channels/`, form);
     }
 
     getChannelMembers(company, channel) {
@@ -46,6 +46,4 @@ export default class CompanyService {
     removeMember(form) {
         return this.http.delete(this.AppConstant.apiUrl + 'channel-members/', form)
     }
-
-
 }
