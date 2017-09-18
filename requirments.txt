@@ -16,3 +16,4 @@ pytz==2017.2
 requests==2.18.4
 six==1.10.0
 urllib3==1.22
+drf-nested-routers==0.90.0
