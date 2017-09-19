@@ -38,12 +38,12 @@ export default class CompanyService {
         return this.http.get(this.AppConstant.apiUrl + `companies/${company}/channels/${channel}/members/`);
     }
 
-    inviteToChannel(form) {
+    inviteToChannel(company, channel, form) {
         // invite selected user
-        return this.http.post(this.AppConstant.apiUrl + 'channel-members/', form);
+        return this.http.post(this.AppConstant.apiUrl + `companies/${company}/channels/${channel}/members/`, form);
     }
 
     removeMember(form) {
-        return this.http.delete(this.AppConstant.apiUrl + 'channel-members/', form)
+        return this.http.delete(this.AppConstant.apiUrl + `companies/${company}/channels/${channel}/members/`, form)
     }
 }

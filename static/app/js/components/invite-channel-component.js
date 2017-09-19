@@ -4,7 +4,7 @@ class InviteChannelMember {
         this.$scope = $scope;
         this.CompanyService = CompanyService;
         this.form = {};
-        this.$stateParams = $stateParams;
+        this.stateParams = $stateParams;
     }
 
     $onInit() {        
@@ -13,8 +13,11 @@ class InviteChannelMember {
     }
 
     invite(user) {
-        const form = {'member': user, 'channel': this.$stateParams.channel};
-        this.CompanyService.inviteToChannel(form).then( resp => {
+        const form = {'member': user, 'channel': this.stateParams.channel};
+        const channel = this.stateParams.channel;
+        const company = this.stateParams.company;
+
+        this.CompanyService.inviteToChannel(company, channel, form).then( resp => {
             this.close({$value: resp.data});
         });
     }
